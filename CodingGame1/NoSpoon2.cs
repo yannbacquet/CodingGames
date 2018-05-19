@@ -5,28 +5,51 @@ using System.Text;
 namespace IAGames
 
 {
-    class NoSpoon2
+    public class NoSpoon2
     {
         static int Id = 0;
-        static List<Cell> cells = new List<Cell>();
+        public static List<Cell> cells = new List<Cell>();
         static List<Tuple<int, int>> interCells = new List<Tuple<int, int>>();
         static void Main(string[] args)
         {
             //- int width = int.Parse(Console.ReadLine()); // the number of cells on the X axis
             //- int height = int.Parse(Console.ReadLine()); // the number of cells on the Y axis
-            int width = 7; // the number of cells on the X axis
-            const int height = 5; // the number of cells on the Y axis
+            int width = 8; // the number of cells on the X axis
+            const int height = 8; // the number of cells on the Y axis
 
-            
-           // string[] lines = new string[height] { "25.1", "47.4", "..1.", "3344" };//-
-           //  string[] lines = new string[height] { "14.3", "....", ".4.4" };//-
-            string[] lines = new string[height] { "2..2.1.", ".3..5.3", ".2.1...", "2...2..",".1....2" };
 
-           // string[] lines = new string[height] { "3.4.6.2.", ".1......", "..2.5..2", "1.......","..1.....",
-                 //                                 ".3..52.3",".2.17..4",".4..51.2" };//-
+            // string[] lines = new string[height] { "25.1", "47.4", "..1.", "3344" };//-
+            //  string[] lines = new string[height] { "14.3", "....", ".4.4" };//-
+            // string[] lines = new string[height] { "2..2.1.", ".3..5.3", ".2.1...", "2...2..",".1....2" };
 
-          //-  Un graphe connexe à  n sommets possède au moins  n - 1 arêtes.
+            string[] lines = new string[height] { "3.4.6.2.", ".1......", "..2.5..2", "1.......","..1.....",
+                                                  ".3..52.3",".2.17..4",".4..51.2" };//-
 
+
+            //-  Un graphe connexe à  n sommets possède au moins  n - 1 arêtes.
+
+            Calculs(height, lines);
+
+            //PRINT
+            PrintRes();
+
+            Console.ReadKey();
+        }
+
+        private static void PrintRes()
+        {
+            foreach (Cell cell in cells)
+            {
+                if (cell.RightCell != null && cell.PondsRights > 0)
+                    Console.WriteLine(cell.X + " " + cell.Y + " " + cell.RightCell.X + " " + cell.RightCell.Y + " " + cell.PondsRights);
+                if (cell.DownCell != null && cell.PondsDown > 0)
+                    Console.WriteLine(cell.X + " " + cell.Y + " " + cell.DownCell.X + " " + cell.DownCell.Y + " " + cell.PondsDown);
+
+            }
+        }
+
+        public static void Calculs(int height, string[] lines)
+        {
             for (int y = 0; y < height; y++)
             {
                 //- string line = Console.ReadLine(); // width characters, each either a number or a '.'
@@ -37,13 +60,14 @@ namespace IAGames
                 {
                     if (v != '.')
                         cells.Add(new Cell(x, y, (int)Char.GetNumericValue(v)));
-                
+
                     x++;
                 }
             }
 
             //remplissage right et down
-            foreach (Cell curCell in  cells){
+            foreach (Cell curCell in cells)
+            {
 
                 Cell rightCell = cells.Find(c => c.Y == curCell.Y && c.X > curCell.X);
                 curCell.RightCell = rightCell;
@@ -53,17 +77,17 @@ namespace IAGames
 
             }
 
-           
-           while(Id< cells.Count )
-           {
-               
+
+            while (Id < cells.Count)
+            {
+
                 //NoeudArbre noeud = new NoeudArbre(curCell); arbre.Push(noeud);
                 //is NoeudValid
                 Cell mainCell = cells[Id];
                 int valRest = mainCell.ValRest;//val - pondsExt
 
                 //cas particuliers
-                if (valRest < 0 || valRest > 4 )
+                if (valRest < 0 || valRest > 4)
                 {
                     Back();
                 }
@@ -72,15 +96,15 @@ namespace IAGames
                     mainCell.IsLastSolution = true; //pas d'autres possibilites
                 }
                 else //valRest!=0
-                { 
+                {
                     //1) Ni RIGHT Ni DOWN : verifier que valrest= new val
                     if (mainCell.nbVoisins() == 0)
                     {
-                            Back();
+                        Back();
                     }
 
                     //2) que RIGHT ou  DOWN : 1 seule possibilité 
-               
+
                     if (mainCell.nbVoisins() == 1)
                     {
                         if (valRest <= 2)
@@ -88,43 +112,46 @@ namespace IAGames
                             bool isAllow = true;
                             mainCell.IsLastSolution = true; //pas d'autres possibilites
                             if (mainCell.RightCell != null)
-                                isAllow= PondsRightDown(mainCell, valRest, 0);
+                                isAllow = PondsRightDown(mainCell, valRest, 0);
                             if (mainCell.DownCell != null)
-                                isAllow= PondsRightDown(mainCell, 0, valRest);
+                                isAllow = PondsRightDown(mainCell, 0, valRest);
 
-                            if (!isAllow) {
+                            if (!isAllow)
+                            {
                                 Id++;
                                 Back();
                             }
                         }
                         else //probleme pop
-                          Back();
+                            Back();
                     }
 
-                   // 3) Right ET  DOWN : --- cas General ---
+                    // 3) Right ET  DOWN : --- cas General ---
                     if (mainCell.nbVoisins() == 2)
                     {
                         if (valRest == 4) //2 right 2 down
                         {
                             mainCell.IsLastSolution = true; //pas d'autres possibilites
-                            bool isAllow=PondsRightDown(mainCell, 2,2);
-                            if (!isAllow) {
+                            bool isAllow = PondsRightDown(mainCell, 2, 2);
+                            if (!isAllow)
+                            {
                                 Id++;
                                 Back();
                             }
 
                         }
-                        else if (valRest <4  && mainCell.PondsRights<2 && mainCell.PondsRights< valRest) 
+                        else if (valRest < 4 && mainCell.PondsRights < 2 && mainCell.PondsRights < valRest)
                         {
                             int right = mainCell.PondsRights + 1;  //a chaque passage on fait 0,v / 1,v-1 / 2,v-2
                             if (valRest - right > 2) //cas 0,3 pas possible
                                 right++;
-                        
+
                             int down = valRest - right;
 
                             PondsRightDown(mainCell, right, down);
                         }
-                        else { //toutes les cas ont ete faits , on back
+                        else
+                        { //toutes les cas ont ete faits , on back
                             mainCell.PondsRights = -1;
                             mainCell.PondsDown = -1;
                             mainCell.IsLastSolution = false;
@@ -135,20 +162,8 @@ namespace IAGames
                 Id++;
 
             } //END WHILE
-
-            //PRINT
-            foreach (Cell cell in cells)
-            {
-                if (cell.RightCell != null && cell.PondsRights>0)
-                    Console.WriteLine(cell.X + " " + cell.Y + " " + cell.RightCell.X + " " + cell.RightCell.Y +" "+ cell.PondsRights);
-                if (cell.DownCell != null && cell.PondsDown > 0)
-                    Console.WriteLine(cell.X + " " + cell.Y + " " + cell.DownCell.X + " " + cell.DownCell.Y + " " + cell.PondsDown);
-
-            }
-
-
-            Console.ReadKey();
         }
+
         private static void Back()
         {
             Console.Error.WriteLine("-BACK-");
@@ -242,9 +257,8 @@ namespace IAGames
                 }
 
             }
-            else {
+            else { //back
                 Id--;
-               // Back();
             }
 
             return isAllow;
@@ -254,7 +268,7 @@ namespace IAGames
 
       
 
-        internal class Cell
+        public class Cell
         {
             int _x;
             int _y;
@@ -306,8 +320,8 @@ namespace IAGames
             public bool IsLastSolution { get => _isLastSolution; set => _isLastSolution = value; }
             public int X { get => _x; set => _x = value; }
             public int Y { get => _y; set => _y = value; }
-            internal Cell RightCell { get => _rightCell; set => _rightCell = value; }
-            internal Cell DownCell { get => _downCell; set => _downCell = value; }
+            public Cell RightCell { get => _rightCell; set => _rightCell = value; }
+            public Cell DownCell { get => _downCell; set => _downCell = value; }
 
             
         }
