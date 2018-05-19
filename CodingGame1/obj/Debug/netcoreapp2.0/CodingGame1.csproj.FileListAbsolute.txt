@@ -1,0 +1,11 @@
+E:\Dev\CSharp\CodingGame1\CodingGame1\bin\Debug\netcoreapp2.0\CodingGame1.deps.json
+E:\Dev\CSharp\CodingGame1\CodingGame1\bin\Debug\netcoreapp2.0\CodingGame1.runtimeconfig.json
+E:\Dev\CSharp\CodingGame1\CodingGame1\bin\Debug\netcoreapp2.0\CodingGame1.runtimeconfig.dev.json
+E:\Dev\CSharp\CodingGame1\CodingGame1\bin\Debug\netcoreapp2.0\CodingGame1.dll
+E:\Dev\CSharp\CodingGame1\CodingGame1\bin\Debug\netcoreapp2.0\CodingGame1.pdb
+E:\Dev\CSharp\CodingGame1\CodingGame1\obj\Debug\netcoreapp2.0\CodingGame1.csprojAssemblyReference.cache
+E:\Dev\CSharp\CodingGame1\CodingGame1\obj\Debug\netcoreapp2.0\CodingGame1.csproj.CoreCompileInputs.cache
+E:\Dev\CSharp\CodingGame1\CodingGame1\obj\Debug\netcoreapp2.0\CodingGame1.AssemblyInfoInputs.cache
+E:\Dev\CSharp\CodingGame1\CodingGame1\obj\Debug\netcoreapp2.0\CodingGame1.AssemblyInfo.cs
+E:\Dev\CSharp\CodingGame1\CodingGame1\obj\Debug\netcoreapp2.0\CodingGame1.dll
+E:\Dev\CSharp\CodingGame1\CodingGame1\obj\Debug\netcoreapp2.0\CodingGame1.pdb
