@@ -16,17 +16,17 @@ namespace IAGames
             //- int width = int.Parse(Console.ReadLine()); // the number of cells on the X axis
             //- int height = int.Parse(Console.ReadLine()); // the number of cells on the Y axis
             // int width = 8; // the number of cells on the X axis
-            const int height = 2; // the number of cells on the Y axis
-            
+            const int height = 5; // the number of cells on the Y axis
+
             // string[] lines = new string[height] { "25.1", "47.4", "..1.", "3344" };//-
             //  string[] lines = new string[height] { "14.3", "....", ".4.4" };//-
             // string[] lines = new string[height] { "2..2.1.", ".3..5.3", ".2.1...", "2...2..",".1....2" };
 
-          // string[] lines = new string[height] { "3.4.6.2.", ".1......", "..2.5..2", "1.......","..1.....",
+            // string[] lines = new string[height] { "3.4.6.2.", ".1......", "..2.5..2", "1.......","..1.....",
             //                                   ".3..52.3",".2.17..4",".4..51.2" };//-
 
-             string[] lines = new string[height] { "21", "21" };//-
-
+            //  string[] lines = new string[height] { "21", "21" };//-
+            string[] lines = { "3..41", ".22..", "..1.1", ".2.2.", "3...3" };
 
 
 
@@ -106,7 +106,7 @@ namespace IAGames
                 }
                 else //valRest!=0
                 {
-                    //1) Ni RIGHT Ni DOWN : verifier que valrest= new val
+                    //1) Ni RIGHT Ni DOWN 
                     if (mainCell.nbVoisins() == 0)
                     {
                         Back();
@@ -120,6 +120,7 @@ namespace IAGames
                         {
                             bool isAllow = true;
                             mainCell.IsLastSolution = true; //pas d'autres possibilites
+
                             if (mainCell.RightCell != null)
                                 isAllow = PondsRightDown(mainCell, valRest, 0);
                             if (mainCell.DownCell != null)
@@ -127,11 +128,12 @@ namespace IAGames
 
                             if (!isAllow)
                             {
+                                Id++; //a cause de PondsRight si allow false
                                 Id++;
                                 Back();
                             }
                         }
-                        else //probleme pop
+                        else //probleme 
                             Back();
                     }
 
@@ -144,6 +146,7 @@ namespace IAGames
                             bool isAllow = PondsRightDown(mainCell, 2, 2);
                             if (!isAllow)
                             {
+                                Id++;
                                 Id++;
                                 Back();
                             }
@@ -162,6 +165,7 @@ namespace IAGames
                         else
                         { //toutes les cas ont ete faits , on back
                             mainCell.IsLastSolution = true;
+                            Id++;
                             Id++;
                             Back();
                         }
@@ -378,20 +382,62 @@ namespace IAGames
                 return -1;
             }
 
-            public int Val { get => _val; set => _val = value; }
-            public int PondsExt { get => _pondsExt; set => _pondsExt = value; }
-            public int PondsRights { get => _pondsRights; set => _pondsRights = value; }
-            public int PondsDown { get => _pondsDown; set => _pondsDown = value; }
-            public bool IsLastSolution { get => _isLastSolution; set => _isLastSolution = value; }
-            public int X { get => _x; set => _x = value; }
-            public int Y { get => _y; set => _y = value; }
-            public Cell RightCell { get => _rightCell; set => _rightCell = value; }
-            public Cell DownCell { get => _downCell; set => _downCell = value; }
+            public int Val {  get { return _val; }
+                                set { _val = value; }
+            }
 
+            public int PondsExt
+            {
+                get { return _pondsExt; }
+                set {  _pondsExt = value; }
+            }
+
+            public int PondsRights
+            {
+                get { return _pondsRights; }
+                set {  _pondsRights = value; }
+            }
+           
+             public int PondsDown
+             {
+                 get { return _pondsDown; }
+                 set {  _pondsDown = value; }
+             }
             
-        }
+             public bool IsLastSolution
+             {
+                 get { return _isLastSolution; }
+                 set {  _isLastSolution = value; }
+             }
+            
+             public int X
+             {
+                 get { return _x; }
+                 set {  _x = value; }
+             }
+            
+             public int Y
+             {
+                 get { return _y; }
+                 set {  _y = value; }
+             }
+            
+             public Cell RightCell
+             {
+                 get { return _rightCell; }
+                 set {  _rightCell = value; }
+             }
+            
+             public Cell DownCell
+             {
+                 get { return _downCell; }
+                 set {  _downCell = value; }
+             }
 
-        internal class NoeudArbreOld
+
+            }
+
+            internal class NoeudArbreOld
         {
             Cell _mainCell;
 

@@ -101,9 +101,26 @@ namespace IAGames
 
             }
 
-            public bool IsNode { get => _isNode; set => _isNode = value; }
-            public int XRight { get => _xRight; set => _xRight = value; }
-            public int YDown { get => _yDown; set => _yDown = value; }
+          
+
+            
+            public bool IsNode
+            {
+                get { return _isNode; }
+                set { _isNode = value; }
+            }
+            
+            public int XRight
+            {
+                get { return _xRight; }
+                set { _xRight = value; }
+            }
+            
+            public int YDown
+            {
+                get { return _yDown; }
+                set { _yDown = value; }
+            }
 
             public String CellInfos()
             {

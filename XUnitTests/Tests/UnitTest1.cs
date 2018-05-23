@@ -4,7 +4,7 @@ using System;
 using Xunit;
 
 
-namespace XUnitTests
+namespace XUnitTests.Tests
 {
     public class UnitTest1
     {
