@@ -9,14 +9,15 @@ namespace IAGames
     {
         public static int Id = 0;
         public static List<Cell> cells;
-        static List<Tuple<int, int>> interCells;
+       // static List<Tuple<int, int>> interCells;
         static HashSet<Cell> linkedCells = new HashSet<Cell>();
+
         static void Main(string[] args)
         {
             //- int width = int.Parse(Console.ReadLine()); // the number of cells on the X axis
             //- int height = int.Parse(Console.ReadLine()); // the number of cells on the Y axis
             // int width = 8; // the number of cells on the X axis
-            const int height = 5; // the number of cells on the Y axis
+            const int height =5; // the number of cells on the Y axis
 
             // string[] lines = new string[height] { "25.1", "47.4", "..1.", "3344" };//-
             //  string[] lines = new string[height] { "14.3", "....", ".4.4" };//-
@@ -24,16 +25,54 @@ namespace IAGames
 
             // string[] lines = new string[height] { "3.4.6.2.", ".1......", "..2.5..2", "1.......","..1.....",
             //                                   ".3..52.3",".2.17..4",".4..51.2" };//-
-
             //  string[] lines = new string[height] { "21", "21" };//-
-            string[] lines = { "3..41", ".22..", "..1.1", ".2.2.", "3...3" };
+            // string[] lines = { "3..41", ".22..", "..1.1", ".2.2.", "3...3" };
 
+            // string[] lines = {"22221","2....","2....","2....","2....","22321",".....",".....","22321","2....",
+            // "2....","2.131","2..2.","2222."};
 
+            string[] lines =
+            {
+                ".12..",
+                ".2421",
+                "24442",
+                "1242.",
+                "..21."
+            };
 
+           /* string[] lines = {"3..2.2..1....3........4",
+            ".2..1....2.6.........2.",
+            "..3..6....3............",
+            ".......2........1..3.3.",
+            "..1.............3..3...",
+            ".......3..3............",
+            ".3...8.....8.........3.",
+            "6.5.1...........1..3...",
+            "............2..6.31..2.",
+            "..4..4.................",
+            "5..........7...7...3.3.",
+            ".2..3..3..3............",
+            "......2..2...1.6...3...",
+            "....2..................",
+            ".4....5...3............",
+            ".................2.3...",
+            ".......3.3..2.44....1..",
+            "3...1.3.2.3............",
+            ".2.....3...6.........5.",
+            "................1......",
+            ".1.......3.6.2...2...4.",
+            "5...............3.....3",
+            "4...................4.2"};*/
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             Calculs(height, lines);
 
             //PRINT
             PrintRes();
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.Error.WriteLine("time" + elapsedMs);
 
             Console.ReadKey();
         }
@@ -56,8 +95,7 @@ namespace IAGames
         {
             Id = 0;
             cells = new List<Cell>();
-            interCells = new List<Tuple<int, int>>();
-
+          
             for (int y = 0; y < height; y++)
             {
                 string line;
@@ -66,6 +104,7 @@ namespace IAGames
                 else
                     line = lines[y];
 
+                Console.Error.WriteLine("\"" + line + "\"" + ",");
                 int x = 0;
                 foreach (char v in line)
                 {
@@ -95,16 +134,15 @@ namespace IAGames
                 Cell mainCell = cells[Id];
                 int valRest = mainCell.ValRest;//val - pondsExt
 
+                mainCell.IsLastSolution = true;
+
                 //cas particuliers
                 if (valRest < 0 || valRest > 4)
                 {
                     Back();
                 }
-                else if (valRest == 0)
-                {
-                    mainCell.IsLastSolution = true; //pas d'autres possibilites
-                }
-                else //valRest!=0
+               // else if (valRest == 0){//-pas d'autres possibilites}
+                else if (valRest!=0)
                 {
                     //1) Ni RIGHT Ni DOWN 
                     if (mainCell.nbVoisins() == 0)
@@ -119,8 +157,7 @@ namespace IAGames
                         if (valRest <= 2)
                         {
                             bool isAllow = true;
-                            mainCell.IsLastSolution = true; //pas d'autres possibilites
-
+                          
                             if (mainCell.RightCell != null)
                                 isAllow = PondsRightDown(mainCell, valRest, 0);
                             if (mainCell.DownCell != null)
@@ -128,8 +165,6 @@ namespace IAGames
 
                             if (!isAllow)
                             {
-                                Id++; //a cause de PondsRight si allow false
-                                Id++;
                                 Back();
                             }
                         }
@@ -142,93 +177,84 @@ namespace IAGames
                     {
                         if (valRest == 4) //2 right 2 down
                         {
-                            mainCell.IsLastSolution = true; //pas d'autres possibilites
                             bool isAllow = PondsRightDown(mainCell, 2, 2);
                             if (!isAllow)
                             {
-                                Id++;
-                                Id++;
                                 Back();
                             }
 
                         }
-                        else if (valRest < 4 && mainCell.PondsRights < 2 && mainCell.PondsRights < valRest)
-                        {
-                            int right = mainCell.PondsRights + 1;  //a chaque passage on fait 0,v / 1,v-1 / 2,v-2
-                            if (valRest - right > 2) //cas 0,3 pas possible
-                                right++;
+                         else if (valRest < 4 && mainCell.PondsRights < 2 && mainCell.PondsRights < valRest)
+                         {
+                             int right = mainCell.PondsRights + 1;  //a chaque passage on fait 0,v / 1,v-1 / 2,v-2
+                             if (valRest - right > 2) //cas 0,3 pas possible
+                                 right++;
 
-                            int down = valRest - right;
-
-                            PondsRightDown(mainCell, right, down);
+                             mainCell.IsLastSolution = false; //dans tous les autres cas c'est true
+                             int down = valRest - right;
+                             bool isAllow =  PondsRightDown(mainCell, right, down);
+                        
+                            if (!isAllow) //on ne back pas mais on reste sur le meme Id
+                            {
+                                Id--;
+                            }
                         }
                         else
                         { //toutes les cas ont ete faits , on back
-                            mainCell.IsLastSolution = true;
-                            Id++;
-                            Id++;
                             Back();
                         }
                     }
                 }
-                Id++;
+               
 
                 //FIN CHECK VERIF GRAPHE CONNEXE
-                if (Id == cells.Count)
+                if (Id == cells.Count-1)
                 {
                     Console.Error.WriteLine("CHECK:");
-                   
                    
                     //creation liste principale chainee
                     linkedCells.Clear();
                     LinkCell(linkedCells,cells[0]);
 
-                    //rajout de cellules oubliees
-                     HashSet<Cell> otherLinkedCells = new HashSet<Cell>();
-                    foreach (Cell curCell in cells)
-                    {
-                        if (!linkedCells.Contains(curCell))
-                        {
-                            otherLinkedCells.Clear();
-                            LinkCell(otherLinkedCells, curCell);
+                    if(linkedCells.Count!= cells.Count) {
+                        Console.Error.WriteLine("GRAPHE NON CONNEXE:");
+                        Back();
+                        
+                    } //end If
 
-                            // on prends les cells de 'otherLink' n'appartenant pas a la main
-                            int otherLinkSize = otherLinkedCells.Count;
-                            otherLinkedCells.ExceptWith(linkedCells);
+                }//END check connexe
 
-                            if (otherLinkSize!= otherLinkedCells.Count) //si meme nb c'est que les 2 listes n'ont rien en commun
-                            {
-                                linkedCells.UnionWith(otherLinkedCells); 
-                            }
-                            else
-                            {
-                                Console.Error.WriteLine("GRAPHE NON CONNEXE:");
-                                Back();
-                                Id++;
-                                break;
-                            }
-                        }
+                Id++;
+                
 
-                    }
-                     
-                    
-                }
-
-                } //END WHILE
+            } //END WHILE
         }
 
         //methode recursive qui trouve la liste des cellules liees entre elles
         private static void LinkCell(HashSet<Cell> setCells,  Cell cell)
         {
+            //verifier qu'elle nexiste pas deja sinon boucle infinie
+            if (!setCells.Contains(cell))
                 setCells.Add(cell);
+            else
+                 return;
+           
 
             if (cell.RightCell != null && cell.PondsRights>0) { 
                 LinkCell(setCells,cell.RightCell);
             }
-            if (cell.DownCell != null && cell.PondsDown  > 0)
-            {
+            if (cell.DownCell != null && cell.PondsDown  > 0){
                LinkCell(setCells,cell.DownCell);
             }
+
+            Cell upCell = cells.Find(c => c.DownCell == cell && c.PondsDown > 0);
+            if (upCell!=null)
+                LinkCell(setCells, upCell);
+            Cell leftCell = cells.Find(c => c.RightCell == cell && c.PondsRights>0);
+            if (leftCell != null)
+                LinkCell(setCells, leftCell);
+
+
 
         }
 
@@ -237,7 +263,6 @@ namespace IAGames
         {
             Console.Error.WriteLine("-BACK-");
 
-            Id--;
             while (Id >= 0 && cells[Id].IsLastSolution)
             {
              
@@ -248,13 +273,12 @@ namespace IAGames
                Id--;
             }
                         
-            reCreateAllInterAndExt();
+            RecalculPondsExt();
             Id--;
         }
 
-        private static void reCreateAllInterAndExt()
+        private static void RecalculPondsExt()
         {
-            interCells.Clear();
             //clear des pondsExt
             foreach (Cell cell in cells)
                 cell.PondsExt = 0;
@@ -264,73 +288,83 @@ namespace IAGames
                 var cell = cells[i];
                 //cell de droite
                 if (cell.PondsRights>0)
-                {
                     cell.RightCell.PondsExt += cell.PondsRights;
-                    for (int x = cell.X + 1; x < cell.RightCell.X; x++)
-                        interCells.Add(new Tuple<int, int>(x, cell.Y));
-                }
-
+         
                 //cell du bas
                 if (cell.PondsDown>0)
-                {
                     cell.DownCell.PondsExt += cell.PondsDown;
-                    for (int y = cell.Y + 1; y < cell.DownCell.Y; y++)
-                        interCells.Add(new Tuple<int, int>(cell.X, y));
-                }
+                
             }
         }
 
         private static bool PondsRightDown(Cell cell,int right, int down)
         {
 
-            bool NoIntersect = true;
+            bool isChecked = true;
             //check intermediaires (y a t-il croisement)
+
             if (cell.RightCell != null && right != 0)
             {
-                for (int x = cell.X + 1; x < cell.RightCell.X; x++) {
-                    if (interCells.Exists(c => c.Item1 == x && c.Item2 == cell.Y))
-                        NoIntersect = false;
-                }
+                //right : 
+               if ( cells.Find(c => c.X > cell.X && c.X < cell.RightCell.X &&
+                                    c.Y < cell.Y && c.DownCell != null && c.DownCell.Y > cell.Y && c.PondsDown>0) !=null)
+                   isChecked = false;
             }
             if (cell.DownCell != null && down != 0)
             {
-                for (int y = cell.Y + 1; y < cell.DownCell.Y; y++)
-                    if (interCells.Exists(c => c.Item1 == cell.X && c.Item2 == y))
-                        NoIntersect = false;
+                if (cells.Find(c => c.Y > cell.Y && c.Y < cell.DownCell.Y &&
+                                    c.X < cell.X && c.RightCell != null && c.RightCell.X > cell.X && c.PondsRights > 0) != null)
+                    isChecked = false;
+
+            }
+            
+            // cas des connexes particuliers
+            // 2=2
+            if (cells.Count > 2) { 
+            if (cell.RightCell != null && cell.RightCell.PondsExt==0   && cell.RightCell.Val==2 &&  right == 2 && down == 0 &&
+                                         cell.PondsExt == 0            && cell.Val==2  )
+            {
+                isChecked = false;
+            }
+            if (cell.DownCell != null && cell.DownCell.PondsExt == 0 && cell.DownCell.Val == 2 && right ==0 && down == 2 &&
+                cell.PondsExt == 0 && cell.Val == 2)
+            {
+                isChecked = false;
             }
 
+            // 1-1
+            if (cell.RightCell != null && cell.RightCell.PondsExt == 0 && cell.RightCell.Val == 1 && right ==1 && down == 0 &&
+                cell.PondsExt == 0 && cell.Val ==1)
+            {
+                isChecked = false;
+            }
+            if (cell.DownCell != null && cell.DownCell.PondsExt == 0 && cell.DownCell.Val == 1 && right == 0 && down == 1 &&
+                cell.PondsExt == 0 && cell.Val == 1)
+            {
+                isChecked = false;
+            }
+            }
+
+            
             cell.PondsRights = right;
             cell.PondsDown = down;
 
-            Console.Error.WriteLine("PRD("+cell.X+","+cell.Y+ ")  v r/d: " + cell.Val + "  "+ right + "/" + down + "   No Inters:" + NoIntersect);
+          
+          //  Console.Error.WriteLine("("+cell.X + "," + cell.Y + ")  :" + cell.Val + ":  " +cell.ValRest+"  "+   right + "/" + down + "   " +( isChecked? "":"False"));
 
-            if (NoIntersect)
+            if (isChecked)
             {
-
                 //cell de droite
                 if (cell.RightCell != null && right != 0)
-                {
-                    cell.RightCell.PondsExt += right;
-
-                    for (int x = cell.X + 1; x < cell.RightCell.X; x++)
-                        interCells.Add(new Tuple<int, int>(x, cell.Y));
-                }
-
+                     cell.RightCell.PondsExt += right;
+               
                 //cell du bas
                 if (cell.DownCell != null && down != 0)
-                {
                     cell.DownCell.PondsExt +=  down;
 
-                    for (int y = cell.Y + 1; y < cell.DownCell.Y; y++)
-                        interCells.Add(new Tuple<int, int>(cell.X, y));
-                }
-
             }
-            else { //back
-                Id--;
-            }
-
-            return NoIntersect;
+        
+            return isChecked;
         }
 
 
@@ -436,7 +470,7 @@ namespace IAGames
 
 
             }
-
+        //---------------------------------------------------------------------------------------------
             internal class NoeudArbreOld
         {
             Cell _mainCell;
@@ -457,6 +491,32 @@ namespace IAGames
             }
 
         }
+
+        // code pour trouver chemin connexe : en doublon par rapport au LinkCell sur les 4 directions.
+        /*    HashSet<Cell> otherLinkedCells = new HashSet<Cell>();
+                         foreach (Cell curCell in cells)
+                         {
+                             if (!linkedCells.Contains(curCell))
+                             {
+                                 otherLinkedCells.Clear();
+                                 LinkCell(otherLinkedCells, curCell);
+
+                                 // on prends les cells de 'otherLink' n'appartenant pas a la main
+                                 int otherLinkSize = otherLinkedCells.Count;
+                                 otherLinkedCells.ExceptWith(linkedCells);
+
+                                 if (otherLinkSize!= otherLinkedCells.Count) //si meme nb c'est que les 2 listes n'ont rien en commun
+                                 {
+                                     linkedCells.UnionWith(otherLinkedCells); 
+                                 }
+                                 else
+                                 {
+                                     Console.Error.WriteLine("GRAPHE NON CONNEXE:");
+                                     Back();
+                                     break;
+                                 }
+                             }
+                         }*/
     }
 }
 
