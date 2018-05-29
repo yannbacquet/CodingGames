@@ -75,28 +75,42 @@ namespace IAGames
                  if (noeud != null) noeud.IsGate = true;
              }
 
-            
+            var largestNode = noeudLst.OrderBy(c => c.Children.Count).Last(); //ca fait un count et prend le max
+            Console.Error.WriteLine("largest:" + largestNode.ID);
+
             // game loop
             while (true)
             {
                 int SI = 11;//= int.Parse(Console.ReadLine()); // The index of the node on which the Skynet agent is positioned this turn
 
-              /*  Node agent = nodes.Where(n => n.Index == SI).First();
-                Node exit = nodes.Where(n => n.IsExit && agent.Children.Contains(n)).FirstOrDefault();
-                Node largestNode = nodes.OrderBy(n => n.Children.Count).Last();
-                Node bestNode = exit == null ? agent.Children.Where(n => n.Children.Contains(largestNode)).OrderBy(n => n.Children.Count).FirstOrDefault() : exit;
-                Node kill = bestNode == null ? agent.Children.OrderBy(n => n.Children.Count).Last() : bestNode;
-                */
+                /*  Node agent = nodes.Where(n => n.Index == SI).First();
+                  Node exit = nodes.Where(n => n.IsExit && agent.Children.Contains(n)).FirstOrDefault();
+                  Node largestNode = nodes.OrderBy(n => n.Children.Count).Last();
+                  Node bestNode = exit == null ? agent.Children.Where(n => n.Children.Contains(largestNode)).OrderBy(n => n.Children.Count).FirstOrDefault() : exit;
+                  Node kill = bestNode == null ? agent.Children.OrderBy(n => n.Children.Count).Last() : bestNode;
+                  */
 
+                // var nbchild = noeudSky.Children.Select(c => c.Children.Count).Max();
 
-                var noeudSk =  noeudLst.First(n => n.ID == SI);
-                //si le noeud Skynet est a cote d'une gate =>noeud2 = gate , sinon on prend le 1er children
-                var noeud2 = noeudSk.Children.FirstOrDefault(c => c.IsGate) ?? noeudSk.Children.ToList()[0];
+                var noeudSky =  noeudLst.First(n => n.ID == SI);
+                
+
+                var noeud2 = noeudSky.Children.FirstOrDefault(c => c.IsGate);
+                if (noeud2 == null) //Skynet nest pas pres d'une porte
+                {
+                 
+                  noeud2 =  noeudSky.Children.Where(c => c.Children.Contains(largestNode)).OrderBy(n => n.Children.Count).FirstOrDefault();
+                  if (noeud2!=null) Console.Error.WriteLine("contains Largest:" + noeud2.ID);
+                    if (noeud2 == null) {
+                        noeud2 = noeudSky.Children.OrderBy(c => c.Children.Count).Last();
+                        Console.Error.WriteLine("Not contain Largest:" + noeud2.ID);
+                    }
+                }
 
                 //remove link :
-                Console.WriteLine(noeudSk.ID + " " + noeud2.ID);
-                noeudSk.Children.Remove(noeud2);
-                noeud2.Children.Remove(noeudSk);
+                Console.WriteLine(noeudSky.ID + " " + noeud2.ID);
+                noeudSky.Children.Remove(noeud2);
+                noeud2.Children.Remove(noeudSky);
 
              
 
