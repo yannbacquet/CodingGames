@@ -12,8 +12,6 @@ namespace IAGames
         private static int[,] links;
         private static int[] gates;
 
-       static  List<Tuple<int,int>> lstArbre =new List<Tuple<int, int>>();
-
         class Noeud
         {
             public int ID { get; set; }
@@ -92,25 +90,26 @@ namespace IAGames
 
                 // var nbchild = noeudSky.Children.Select(c => c.Children.Count).Max();
 
-                var noeudSky =  noeudLst.First(n => n.ID == SI);
+                var noeudSI =  noeudLst.First(n => n.ID == SI);
                 
-
-                var noeud2 = noeudSky.Children.FirstOrDefault(c => c.IsGate);
-                if (noeud2 == null) //Skynet nest pas pres d'une porte
+                var noeud2 = noeudSI.Children.FirstOrDefault(c => c.IsGate);
+                
+                //Skynet nest pas pres d'une porte
+                if (noeud2 == null)
                 {
-                 
-                  noeud2 =  noeudSky.Children.Where(c => c.Children.Contains(largestNode)).OrderBy(n => n.Children.Count).FirstOrDefault();
+                    //noeud child de SI qui pointe vers 'largestNode'
+                  noeud2 =  noeudSI.Children.Where(c => c.Children.Contains(largestNode)).OrderBy(n => n.Children.Count).FirstOrDefault();
                   if (noeud2!=null) Console.Error.WriteLine("contains Largest:" + noeud2.ID);
-                    if (noeud2 == null) {
-                        noeud2 = noeudSky.Children.OrderBy(c => c.Children.Count).Last();
+                  if (noeud2 == null) {
+                        noeud2 = noeudSI.Children.OrderBy(c => c.Children.Count).Last();//noeud conteant le + de children
                         Console.Error.WriteLine("Not contain Largest:" + noeud2.ID);
                     }
                 }
 
                 //remove link :
-                Console.WriteLine(noeudSky.ID + " " + noeud2.ID);
-                noeudSky.Children.Remove(noeud2);
-                noeud2.Children.Remove(noeudSky);
+                Console.WriteLine(noeudSI.ID + " " + noeud2.ID);
+                noeudSI.Children.Remove(noeud2);
+                noeud2.Children.Remove(noeudSI);
 
              
 
@@ -118,45 +117,7 @@ namespace IAGames
             }//END WHILE
         }
 
-        static void LiensDe(int noeudP)
-        {
-            //si noeud est une gate
-            for (int i = 0; i < E; i++)
-            {
-                if (noeudP == gates[i])
-                {
-                    Console.Error.WriteLine("gate atteinte" + noeudP);
-                    return;
-                }
-            }
-
-            for (int j = 0; j < L; j++)
-            {
-                //si pas contenu deja dans la liste
-                //if( !lstNoeuds.Contains(new Tuple<int, int>(links[j, 1], noeudP)) && !lstNoeuds.Contains(new Tuple<int, int>(noeudP, links[j, 1]))) {
-                if (lstArbre.Find(l=> (l.Item1== links[j, 0] && l.Item2 == links[j, 1]) || (l.Item1 == links[j, 1] && l.Item2 == links[j, 0]))==null){
-
-                    if (links[j, 0] == noeudP && links[j, 2] == 1)
-                    {
-                        Console.Error.WriteLine("add "+ links[j, 1] + " -> "+ noeudP);
-
-                        lstArbre.Add(new Tuple<int, int>(links[j, 1], noeudP)); //noeud, noeud parent
-
-                        LiensDe(links[j, 1]);
-                        break;
-                    }
-                    if (links[j, 1] == noeudP && links[j, 2] == 1)
-                    {
-                        Console.Error.WriteLine("add " + links[j, 0] + " -> " + noeudP);
-
-                        lstArbre.Add(new Tuple<int, int>(links[j, 0], noeudP)); //noeud, noeud parent
-
-                        LiensDe(links[j, 0]);
-                        break;
-                    }
-               }
-            }
-        }
+      
 
     }
 }
