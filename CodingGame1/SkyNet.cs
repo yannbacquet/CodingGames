@@ -30,7 +30,7 @@ namespace IAGames
             public HashSet<Noeud> Children => _children;
         }
 
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             /*string[] inputs;
             inputs = Console.ReadLine().Split(' ');
